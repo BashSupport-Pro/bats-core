@@ -41,8 +41,13 @@ END_OF_HELP_TEXT
 }
 
 expand_link() {
-  readlink="$(type -p greadlink readlink | head -1)"
-  "$readlink" -f "$1"
+  local dirname="$(dirname "$1")"
+  if [ ! -d "$dirname" ]; then
+    return
+  fi
+
+  local filename="$(basename "$1")"
+  echo "$(cd "$dirname" && pwd -P)/$filename"
 }
 
 expand_path() {
