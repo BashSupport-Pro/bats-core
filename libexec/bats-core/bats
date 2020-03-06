@@ -2,7 +2,7 @@
 set -e
 
 export BATS_VERSION='1.3.0'
-VALID_FORMATTERS="pretty, junit, tap, tap13"
+VALID_FORMATTERS="pretty, junit, tap, tap13, bashpro"
 
 version() {
   printf 'Bats %s\n' "$BATS_VERSION"
@@ -31,7 +31,7 @@ HELP_TEXT_HEADER
   -c, --count               Count test cases without running any tests
   -f, --filter <regex>      Only run tests that match the regular expression
   -F, --formatter <type>    Switch between formatters: pretty (default),
-                              tap (default w/o term), tap13, junit
+                              tap (default w/o term), tap13, junit, bashpro
   -h, --help                Display this help message
   -j, --jobs <jobs>         Number of parallel jobs (requires GNU parallel)
   --no-tempdir-cleanup      Preserve test output temporary directory
@@ -137,7 +137,7 @@ while [[ "$#" -ne 0 ]]; do
   -F | --formatter)
     shift
     # allow cat formatter to see extended output but don't advertise to users
-    if [[ $1 =~ ^(pretty|junit|tap|tap13|cat)$ ]]; then
+    if [[ $1 =~ ^(pretty|junit|tap|tap13|cat|bashpro)$ ]]; then
       formatter="$1"
     else
       printf "Unknown formatter '%s', valid options are %s\n" "$1" "${VALID_FORMATTERS}"
@@ -288,7 +288,7 @@ source "$BATS_ROOT/lib/bats-core/validator.bash"
 set -o pipefail execfail
 
 if [[ -n "$report_formatter" ]]; then
-  exec bats-exec-suite "${flags[@]}" "${filenames[@]}" | tee >("bats-format-${report_formatter}" "${report_formatter_flags[@]}" >"${BATS_REPORT_OUTPUT_PATH}/${BATS_REPORT_FILE_NAME}") | bats_test_count_validator | "bats-format-${formatter}" "${formatter_flags[@]}"
+  exec "$BASH" bats-exec-suite "${flags[@]}" "${filenames[@]}" | tee >("$BASH" "bats-format-${report_formatter}" "${report_formatter_flags[@]}" >"${BATS_REPORT_OUTPUT_PATH}/${BATS_REPORT_FILE_NAME}") | bats_test_count_validator | "$BASH" "bats-format-${formatter}" "${formatter_flags[@]}"
 else
-  exec bats-exec-suite "${flags[@]}" "${filenames[@]}" | bats_test_count_validator | "bats-format-${formatter}" "${formatter_flags[@]}"
+  exec "$BASH" bats-exec-suite "${flags[@]}" "${filenames[@]}" | bats_test_count_validator | "$BASH" "bats-format-${formatter}" "${formatter_flags[@]}"
 fi

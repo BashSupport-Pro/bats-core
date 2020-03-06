@@ -58,6 +58,9 @@ bats_print_stack_trace() {
 }
 
 bats_print_failed_command() {
+  # BashSupport Pro change: don't try to print when there's no stack, e.g. on syntax error in the .bats file
+	[[ ${#BATS_STACK_TRACE[@]} -eq 0 ]] && return
+
 	local frame="${BATS_STACK_TRACE[${#BATS_STACK_TRACE[@]} - 1]}"
 	local filename
 	local lineno

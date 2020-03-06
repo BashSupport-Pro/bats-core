@@ -56,4 +56,5 @@ fi
 
 export BATS_ROOT=${BATS_PATH%/*/*}
 export -f bats_readlinkf
-exec env BATS_ROOT="$BATS_ROOT" "$BATS_ROOT/libexec/bats-core/bats" "$@"
+
+exec env BATS_ROOT="$BATS_ROOT" "$BASH" "$BATS_ROOT/libexec/bats-core/bats" "$@"

@@ -139,7 +139,11 @@ if [[ "$num_jobs" -gt 1 ]] && [[ -z "$bats_no_parallelize_across_files" ]]; then
   fi
 else
   for filename in "${BATS_UNIQUE_TEST_FILENAMES[@]}"; do
-    bats-exec-file "${flags[@]}" "$filename" "${TESTS_LIST_FILE}" || status=1
+    if [ -n "${BATS_SHELL:-}" ]; then
+      "$BATS_SHELL" bats-exec-file "${flags[@]}" "$filename" "${TESTS_LIST_FILE}" || status=1
+    else
+      bats-exec-file "${flags[@]}" "$filename" "${TESTS_LIST_FILE}" || status=1
+    fi
   done
 fi
 
