@@ -329,7 +329,11 @@ else
       bats_exec_suite_status=130 # bash's code for SIGINT exits
       break
     fi
-    bats-exec-file "${flags[@]}" "$file_index" "$filename" "${TESTS_LIST_FILE}" || bats_exec_suite_status=1
+    if [ -n "${BATS_SHELL:-}" ]; then
+      "$BATS_SHELL" bats-exec-file "${flags[@]}" "$file_index" "$filename" "${TESTS_LIST_FILE}" || bats_exec_suite_status=1
+    else
+      bats-exec-file "${flags[@]}" "$file_index" "$filename" "${TESTS_LIST_FILE}" || bats_exec_suite_status=1
+    fi
     if (( BATS_ABORT_ON_FAILURE && bats_exec_suite_status > 0 )); then
       break
     fi
